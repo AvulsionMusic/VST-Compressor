@@ -166,7 +166,8 @@ bool VSTCompressorAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* VSTCompressorAudioProcessor::createEditor()
 {
-    return new VSTCompressorAudioProcessorEditor (*this);
+    //return new VSTCompressorAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -188,4 +189,32 @@ void VSTCompressorAudioProcessor::setStateInformation (const void* data, int siz
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new VSTCompressorAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+    VSTCompressorAudioProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "Threshold",
+        "Threshold",
+        juce::NormalisableRange<float>(-24, 0, 0.5),
+        0));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "Output",
+        "Output",
+        juce::NormalisableRange<float>(0, 24, 0.5),
+        0));
+
+    juce::StringArray modes = { "Slow", "Med", "Fast" };
+
+    layout.add(std::make_unique<juce::AudioParameterChoice>(
+        "Mode",
+        "Mode",
+        modes,
+        0));
+
+    return layout;
 }
